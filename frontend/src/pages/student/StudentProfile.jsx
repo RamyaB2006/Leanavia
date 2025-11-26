@@ -61,7 +61,7 @@ const StudentProfile = () => {
     try {
       setLoading(true);
       const { data } = await axios.post(
-        "http://localhost:5000/student/get-student",
+        "https://learnvia-backend.vercel.app/student/get-student",
         { studentId }
       );
       setStudentData(data);
@@ -220,7 +220,7 @@ const StudentProfile = () => {
     setGeneratingPortfolio(true);
     try {
       // First, save portfolio details to database
-      await axios.post("http://localhost:5000/student/save-portfolio-details", {
+      await axios.post("https://learnvia-backend.vercel.app/student/save-portfolio-details", {
         studentId,
         portfolioDetails: {
           phone: portfolioData.profile.phone,
@@ -238,7 +238,7 @@ const StudentProfile = () => {
 
       // Make API request to generate portfolio
       const response = await axios.post(
-        "http://127.0.0.1:8000/generate_portfolio",
+        "https://leanavia-ml.onrender.com/generate_portfolio",
         portfolioData,
         {
           responseType: "blob", // Important for file download
@@ -1049,3 +1049,4 @@ const StudentProfile = () => {
 };
 
 export default StudentProfile;
+
