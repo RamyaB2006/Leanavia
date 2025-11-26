@@ -42,8 +42,8 @@ const Login = () => {
         // Student and Faculty login (API call)
         const endpoint =
           role === "student"
-            ? "http://localhost:5000/student/login"
-            : "http://localhost:5000/faculty/login";
+            ? "https://learnvia-backend.vercel.app/student/login"
+            : "https://learnvia-backend.vercel.app/faculty/login";
 
         const to =
           role === "student" ? "/student/addActivity" : "/faculty/students";
@@ -347,3 +347,4 @@ const Login = () => {
 };
 
 export default Login;
+
