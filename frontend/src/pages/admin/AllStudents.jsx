@@ -47,7 +47,7 @@ const AllStudents = () => {
       setLoading(true);
       setError("");
       const { data } = await axios.get(
-        "http://localhost:5000/student/get-all-students"
+        "https://learnvia-backend.vercel.app/student/get-all-students"
       );
       setStudents(data);
     } catch (error) {
@@ -83,7 +83,7 @@ const AllStudents = () => {
 
     try {
       setDeleteLoading(true);
-      await axios.post(`http://localhost:5000/admin/delete-student`, {
+      await axios.post(`https://learnvia-backend.vercel.app/admin/delete-student`, {
         studentId,
       });
 
@@ -849,3 +849,4 @@ const AllStudents = () => {
 };
 
 export default AllStudents;
+
