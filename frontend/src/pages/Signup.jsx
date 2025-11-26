@@ -57,8 +57,8 @@ const Signup = () => {
     try {
       const endpoint =
         role === "student"
-          ? "http://localhost:5000/student/register"
-          : "http://localhost:5000/faculty/register";
+          ? "https://learnvia-backend.vercel.app/student/register"
+          : "https://learnvia-backend.vercel.app/faculty/register";
 
       const response = await axios.post(endpoint, {
         name,
@@ -509,3 +509,4 @@ const Signup = () => {
 };
 
 export default Signup;
+
