@@ -48,7 +48,7 @@ const Students = () => {
     try {
       setLoading(true);
       const { data } = await axios.get(
-        "http://localhost:5000/student/get-all-students"
+        "https://learnvia-backend.vercel.app/student/get-all-students"
       );
       setStudents(data);
     } catch (error) {
@@ -72,7 +72,7 @@ const Students = () => {
     setIsProcessing(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/faculty/change-status",
+        "https://learnvia-backend.vercel.app/faculty/change-status",
         {
           activityId,
           status,
@@ -120,7 +120,7 @@ const Students = () => {
     setIsProcessing(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/faculty/add-feedback",
+        "https://learnvia-backend.vercel.app/faculty/add-feedback",
         {
           facultyId,
           studentId: selectedStudent._id,
@@ -872,3 +872,4 @@ const Students = () => {
 };
 
 export default Students;
+
