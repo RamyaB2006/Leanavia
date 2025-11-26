@@ -263,7 +263,7 @@ const StudentProfile = () => {
       link.href = downloadUrl;
       link.setAttribute(
         "download",
-        `${portfolioData.profile.name.replace(/\s+/g, "_")}_Portfolio.pdf`
+        `${portfolioData.profile.name.replace(/\s+/g, "_")}_Portfolio.html`
       );
       document.body.appendChild(link);
       link.click();
@@ -1049,4 +1049,5 @@ const StudentProfile = () => {
 };
 
 export default StudentProfile;
+
 
