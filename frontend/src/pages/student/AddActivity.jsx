@@ -124,7 +124,7 @@ const AddActivity = () => {
     try {
       setLoadingActivities(true);
       const { data } = await axios.post(
-        "http://localhost:5000/student/get-student",
+        "https://learnvia-backend.vercel.app/student/get-student",
         { studentId }
       );
       setStudentData(data);
@@ -292,7 +292,7 @@ const AddActivity = () => {
       }
 
       const response = await axios.post(
-        "http://localhost:5000/activities/add",
+        "https://learnvia-backend.vercel.app/activities/add",
         {
           studentId,
           title: formData.title,
@@ -329,7 +329,7 @@ const AddActivity = () => {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/recommendations",
+        "https://leanavia-ml.onrender.com/recommendations",
         aiFormData
       );
 
@@ -355,7 +355,7 @@ const AddActivity = () => {
     setIsDeleting(activityId);
     try {
       const response = await axios.post(
-        `http://localhost:5000/activities/remove`,
+        `https://learnvia-backend.vercel.app/activities/remove`,
         { activityId, studentId }
       );
 
@@ -1194,3 +1194,4 @@ const AddActivity = () => {
 };
 
 export default AddActivity;
+
