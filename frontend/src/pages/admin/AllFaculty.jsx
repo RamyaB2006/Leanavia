@@ -36,7 +36,7 @@ const AllFaculty = () => {
     try {
       setLoading(true);
       setError("");
-      const { data } = await axios.get("http://localhost:5000/faculty/get-all");
+      const { data } = await axios.get("https://learnvia-backend.vercel.app/faculty/get-all");
       setAllFaculty(data);
     } catch (error) {
       console.log(error);
@@ -62,7 +62,7 @@ const AllFaculty = () => {
     setIsDeleting(facultyId);
     try {
       const response = await axios.post(
-        "http://localhost:5000/admin/delete-faculty",
+        "https://learnvia-backend.vercel.app/admin/delete-faculty",
         { facultyId }
       );
 
@@ -611,3 +611,4 @@ const AllFaculty = () => {
 };
 
 export default AllFaculty;
+
