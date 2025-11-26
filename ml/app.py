@@ -1,58 +1,35 @@
-# app.py
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import StreamingResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr
 from typing import List, Optional, Union
 from datetime import date, datetime
-from io import BytesIO
-from reportlab.lib.pagesizes import A4
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib import colors
 import uvicorn
 
-app = FastAPI(title="Learnavia - Portfolio & Recommendations API")
+app = FastAPI(title="Learnavia - Attractive Portfolio Generator API")
 
-# ------------------------------
 # CORS setup
-# ------------------------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],   # change ["*"] to your frontend domain(s) for production
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# ------------------------------
-# Pydantic models
-# ------------------------------
 class Activity(BaseModel):
     id: Optional[str] = None
     type: str
     title: str
-    date: Optional[Union[date, str]] = None   # accepts date objects or strings
+    date: Optional[Union[date, str]] = None
     description: Optional[str] = None
     tags: Optional[List[str]] = []
     proof_url: Optional[str] = None
     status: Optional[str] = "approved"
 
-def _format_activity_date(d):
-    """
-    Accepts date | str | None and returns a printable string.
-    """
-    if d is None:
-        return "-"
-    if isinstance(d, date):
-        return d.isoformat()
-    if isinstance(d, str):
-        return d
-    return str(d)
-
 class StudentProfile(BaseModel):
     name: str
-    email: Optional[EmailStr] = None   # optional now
+    email: Optional[EmailStr] = None
     phone: Optional[str] = None
     college: Optional[str] = None
     department: Optional[str] = None
@@ -76,98 +53,130 @@ class RecommendationRequest(BaseModel):
     activities: Optional[List[Activity]] = []
     num_recs: Optional[int] = 6
 
-# ------------------------------
-# Helper: simple PDF generator (reportlab)
-# ------------------------------
-def build_portfolio_pdf_bytes(profile: StudentProfile, activities: List[Activity], include_badges=True):
-    buf = BytesIO()
-    doc = SimpleDocTemplate(buf, pagesize=A4,
-                            rightMargin=36, leftMargin=36,
-                            topMargin=36, bottomMargin=24)
-    styles = getSampleStyleSheet()
-    story = []
+# Helper function to get layout styles
+def get_layout_style(layout):
+    if layout == "modern":
+        return """
+        body { background: linear-gradient(135deg, #1a1a1a 0%, #2d3748 100%); color: #fff; }
+        .container { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .section-title { color: #4ecdc4; }
+        .skill-tag { background: linear-gradient(45deg, #667eea, #764ba2); }
+        .activity-item { background: rgba(255,255,255,0.05); border-left: 4px solid #4ecdc4; }
+        """
+    elif layout == "creative":
+        return """
+        body { background: linear-gradient(45deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%); }
+        .header { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .section-title { color: #ff6b6b; font-family: 'Comic Sans MS', cursive; }
+        .skill-tag { background: linear-gradient(45deg, #ff6b6b, #4ecdc4); border-radius: 25px; }
+        .activity-item { background: #fff; border-radius: 15px; box-shadow: 0 10px 25px rgba(255,107,107,0.2); }
+        .activity-item:hover { transform: translateY(-5px) rotate(1deg); }
+        """
+    else:  
+        return """
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .header { background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%); }
+        .section-title { color: #2196F3; }
+        .skill-tag { background: linear-gradient(135deg, #2196F3, #1976D2); }
+        .activity-item { background: white; border-left: 4px solid #2196F3; }
+        """
 
-    # Header
-    header = f"{profile.name} — Portfolio"
-    story.append(Paragraph(header, styles["Title"]))
-    meta = []
-    if profile.college:
-        meta.append(profile.college)
-    if profile.department:
-        meta.append(profile.department)
-    if profile.year:
-        meta.append(f"Year {profile.year}")
-    if profile.email:
-        meta.append(profile.email)
-    if profile.phone:
-        meta.append(profile.phone)
-    meta_line = " | ".join(meta)
-    story.append(Paragraph(meta_line, styles["Normal"]))
-    story.append(Spacer(1, 12))
+def generate_html_portfolio(profile: StudentProfile, activities: List[Activity], layout="standard"):
+    activities_html = ""
+    for activity in activities:
+        date_str = str(activity.date) if activity.date else "N/A"
+        tags = " ".join([f'<span class="tag">{tag}</span>' for tag in (activity.tags or [])])
+        activities_html += f"""
+        <div class="activity-item">
+            <h4>{activity.title}</h4>
+            <p><strong>{activity.type.upper()}</strong> • {date_str}</p>
+            {f'<p>{activity.description}</p>' if activity.description else ''}
+            <div>{tags}</div>
+        </div>
+        """
+    
+    skills_html = " ".join([f'<span class="skill-tag">{skill}</span>' for skill in (profile.skills or [])])
+    
+    layout_styles = get_layout_style(layout)
 
-    # Summary
-    if profile.summary:
-        story.append(Paragraph("<b>Summary</b>", styles["Heading3"]))
-        story.append(Paragraph(profile.summary, styles["Normal"]))
-        story.append(Spacer(1, 12))
+    html = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>{profile.name} - Portfolio</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <style>
+            * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+            body {{ font-family: 'Inter', sans-serif; min-height: 100vh; padding: 20px; }}
+            .container {{ max-width: 900px; margin: 0 auto; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }}
+            .header {{ color: white; padding: 50px 40px; text-align: center; }}
+            .name {{ font-size: 2.5em; font-weight: 700; margin-bottom: 10px; }}
+            .title {{ font-size: 1.2em; margin-bottom: 20px; opacity: 0.9; }}
+            .content {{ padding: 40px; background: white; }}
+            .section {{ margin-bottom: 30px; }}
+            .section-title {{ font-size: 1.5em; font-weight: 600; margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 8px; }}
+            .skill-tag {{ display: inline-block; color: white; padding: 6px 12px; margin: 4px; border-radius: 15px; font-size: 0.9em; font-weight: 500; }}
+            .activity-item {{ padding: 20px; margin-bottom: 15px; border-radius: 8px; transition: all 0.3s ease; }}
+            .activity-item:hover {{ transform: translateY(-2px); }}
+            .tag {{ background: #f0f0f0; padding: 4px 8px; margin: 2px; border-radius: 10px; font-size: 0.8em; display: inline-block; }}
+            .contact-info {{ display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }}
+            .contact-item {{ background: rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 15px; }}
+            @media (max-width: 768px) {{
+                .header {{ padding: 30px 20px; }}
+                .name {{ font-size: 2em; }}
+                .content {{ padding: 25px 20px; }}
+                .contact-info {{ flex-direction: column; align-items: center; }}
+            }}
+            {layout_styles}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1 class="name">{profile.name}</h1>
+                <p class="title">{profile.department or "Student"}{" at " + profile.college if profile.college else ""}</p>
+                <div class="contact-info">
+                    {f'<div class="contact-item">📧 {profile.email}</div>' if profile.email else ''}
+                    {f'<div class="contact-item">📱 {profile.phone}</div>' if profile.phone else ''}
+                    {f'<div class="contact-item">🎓 Year {profile.year}</div>' if profile.year else ''}
+                    {f'<div class="contact-item">📊 GPA: {profile.gpa}</div>' if profile.gpa else ''}
+                </div>
+            </div>
+            
+            <div class="content">
+                {f'<div class="section"><h2 class="section-title">About</h2><p>{profile.summary}</p></div>' if profile.summary else ''}
+                
+                {f'<div class="section"><h2 class="section-title">Skills</h2><div>{skills_html}</div></div>' if profile.skills else ''}
+                
+                {f'<div class="section"><h2 class="section-title">Activities</h2>{activities_html}</div>' if activities else ''}
+                
+                <div class="section">
+                    <p style="text-align: center; color: #666; margin-top: 30px;">
+                        ✨ Portfolio generated on {datetime.now().strftime('%B %d, %Y')} ✨
+                    </p>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    return html
 
-    # Skills & Links
-    skills_line = ", ".join(profile.skills or [])
-    if skills_line:
-        story.append(Paragraph("<b>Skills</b>", styles["Heading3"]))
-        story.append(Paragraph(skills_line, styles["Normal"]))
-        story.append(Spacer(1, 12))
-
-    links = []
-    if profile.linkedin:
-        links.append(f"LinkedIn: {profile.linkedin}")
-    if profile.github:
-        links.append(f"Github: {profile.github}")
-    if links:
-        story.append(Paragraph("<b>Links</b>", styles["Heading3"]))
-        story.append(Paragraph("<br/>".join(links), styles["Normal"]))
-        story.append(Spacer(1, 12))
-
-    # Activities Table
-    if activities:
-        story.append(Paragraph("<b>Selected Activities</b>", styles["Heading3"]))
-        table_data = [["Type", "Title", "Date", "Tags", "Status"]]
-        for a in activities:
-            dt = _format_activity_date(a.date)
-            tags = ", ".join(a.tags or [])
-            table_data.append([a.type, a.title, dt, tags, a.status or "-"])
-        tbl = Table(table_data, repeatRows=1, hAlign='LEFT', colWidths=[70, 200, 60, 100, 60])
-        tbl.setStyle(TableStyle([
-            ('BACKGROUND', (0,0), (-1,0), colors.HexColor("#efefef")),
-            ('GRID', (0,0), (-1,-1), 0.4, colors.grey),
-            ('VALIGN', (0,0), (-1,-1), 'TOP'),
-            ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
-        ]))
-        story.append(tbl)
-        story.append(Spacer(1, 12))
-
-    # Badges
-    if include_badges:
-        counts = {}
-        for a in activities:
-            counts[a.type] = counts.get(a.type, 0) + 1
-        if counts:
-            story.append(Paragraph("<b>Badges & Milestones</b>", styles["Heading3"]))
-            badge_lines = [f"{k.title()}: {v}" for k, v in counts.items()]
-            story.append(Paragraph(", ".join(badge_lines), styles["Normal"]))
-            story.append(Spacer(1, 12))
-
-    # Footer
-    story.append(Spacer(1, 24))
-    story.append(Paragraph(f"Generated on {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')}", styles["Italic"]))
-
-    doc.build(story)
-    buf.seek(0)
-    return buf
-
-# ------------------------------
-# Simple Recommendation logic
-# ------------------------------
+@app.post("/generate_portfolio")
+async def generate_portfolio(req: PortfolioRequest):
+    try:
+        html_content = generate_html_portfolio(
+            req.profile, 
+            req.activities or [], 
+            req.layout or "standard"
+        )
+        return HTMLResponse(content=html_content, status_code=200)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Portfolio generation failed: {str(e)}")
+    
 DEFAULT_ACTIVITY_POOL = [
     {"type": "workshop", "title": "Advanced ML Workshop", "tags": ["ml", "python", "projects"], "desc": "Hands-on ML workshop"},
     {"type": "internship", "title": "Research Internship (CS Dept)", "tags": ["research", "paper", "nlp"], "desc": "Short research internship"},
@@ -219,19 +228,6 @@ def recommend_activities(profile: StudentProfile, past_activities: List[Activity
         })
     return out
 
-# ------------------------------
-# Routes
-# ------------------------------
-@app.post("/generate_portfolio")
-async def generate_portfolio(req: PortfolioRequest):
-    try:
-        buf = build_portfolio_pdf_bytes(req.profile, req.activities or [], include_badges=req.include_badges)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"PDF generation failed: {str(e)}")
-    filename = f"{req.profile.name.replace(' ','_')}_portfolio.pdf"
-    return StreamingResponse(buf, media_type="application/pdf",
-                             headers={"Content-Disposition": f"attachment;filename={filename}"})
-
 @app.post("/recommendations")
 async def recommendations(req: RecommendationRequest):
     recs = recommend_activities(req.profile, req.activities or [], num_recs=req.num_recs or 6)
@@ -241,8 +237,5 @@ async def recommendations(req: RecommendationRequest):
 async def health():
     return {"status": "ok", "time": datetime.utcnow().isoformat()}
 
-# ------------------------------
-# Run with Uvicorn
-# ------------------------------
 if __name__ == "__main__":
     uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
