@@ -1,0 +1,222 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Ramya — Resume</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+            <style>
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                
+        body { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 40px 20px;
+        }
+        .container { 
+            background: white;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            border-radius: 0;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: 100vh;
+        }
+        .sidebar {
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 40px 30px;
+        }
+        .sidebar .name {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 8px;
+            word-wrap: break-word;
+        }
+        .sidebar .title {
+            font-size: 1em;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+        }
+        .sidebar-section {
+            margin-bottom: 30px;
+        }
+        .sidebar-section h3 {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #3498db;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .sidebar-item {
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .sidebar-item::before {
+            content: '▸';
+            color: #3498db;
+            font-weight: bold;
+        }
+        .skill-badge {
+            background: rgba(52, 152, 219, 0.2);
+            color: #3498db;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin: 5px 5px 5px 0;
+            display: inline-block;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+        }
+        .main-content {
+            padding: 40px 50px;
+            background: #f8f9fa;
+        }
+        .content-section {
+            background: white;
+            padding: 30px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.6em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #3498db;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title::before {
+            content: '●';
+            color: #3498db;
+            font-size: 0.6em;
+        }
+        .activity-card {
+            background: #f8f9fa;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #3498db;
+            transition: all 0.3s ease;
+        }
+        .activity-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
+        }
+        .activity-card h4 {
+            color: #2c3e50;
+            font-size: 1.15em;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .activity-meta {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .activity-tag {
+            background: #e8f4f8;
+            color: #2980b9;
+            padding: 4px 10px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            margin-right: 6px;
+            display: inline-block;
+            margin-top: 8px;
+        }
+        @media (max-width: 968px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                padding: 30px 20px;
+            }
+            .main-content {
+                padding: 30px 20px;
+            }
+        }
+        
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="sidebar">
+                    <div class="name">Ramya</div>
+                    <div class="title">cse</div>
+                    
+                    <div class="sidebar-section">
+                        <h3>Contact</h3>
+                        <div class="sidebar-item">230878.cs@rmkec.ac.in</div>
+                        <div class="sidebar-item">9876543210</div>
+                        <div class="sidebar-item">abc</div>
+                    </div>
+                    
+                    <div class="sidebar-section">
+                        <h3>Education</h3>
+                        <div class="sidebar-item">Year 3</div>
+                        <div class="sidebar-item">GPA: 8.5</div>
+                    </div>
+                    
+                    <div class="sidebar-section"><h3>Skills</h3><div><span class="skill-badge">ethical hacking</span> <span class="skill-badge">python</span> <span class="skill-badge">web development</span> <span class="skill-badge">cybersecurity</span></div></div>
+                </div>
+                
+                <div class="main-content">
+                    <div class="content-section"><h2 class="section-title">About Me</h2><p style="line-height: 1.8; color: #555;">Passionate computer science student with strong interest in cybersecurity and web development. Actively participating in various technical activities and constantly learning new technologies.</p></div>
+                    
+                    <div class="content-section"><h2 class="section-title">Activities & Experience</h2>
+            <div class="activity-card">
+                <h4>internship</h4>
+                <div class="activity-meta">INTERNSHIP • 2025-11-26</div>
+                <p style="margin: 10px 0; color: #555;">INTERNSHIP</p>
+                <div><span class="activity-tag">python</span> <span class="activity-tag">backend</span></div>
+            </div>
+            
+            <div class="activity-card">
+                <h4>internship</h4>
+                <div class="activity-meta">INTERNSHIP • 2025-11-27</div>
+                <p style="margin: 10px 0; color: #555;">INTERNSHIP</p>
+                <div><span class="activity-tag">react</span> <span class="activity-tag">frontend</span></div>
+            </div>
+            
+            <div class="activity-card">
+                <h4>Machine Learning Workshop</h4>
+                <div class="activity-meta">WORKSHOP • 2025-10-15</div>
+                <p style="margin: 10px 0; color: #555;">Attended hands-on workshop on ML algorithms and practical implementation</p>
+                <div><span class="activity-tag">machine learning</span> <span class="activity-tag">python</span> <span class="activity-tag">scikit-learn</span></div>
+            </div>
+            
+            <div class="activity-card">
+                <h4>E-commerce Website</h4>
+                <div class="activity-meta">PROJECT • 2025-09-20</div>
+                <p style="margin: 10px 0; color: #555;">Built a full-stack e-commerce platform with payment integration</p>
+                <div><span class="activity-tag">react</span> <span class="activity-tag">node.js</span> <span class="activity-tag">mongodb</span></div>
+            </div>
+            
+            <div class="activity-card">
+                <h4>Hackathon Winner</h4>
+                <div class="activity-meta">COMPETITION • 2025-08-10</div>
+                <p style="margin: 10px 0; color: #555;">Won first place in 24-hour hackathon for building AI-powered chatbot</p>
+                <div><span class="activity-tag">ai</span> <span class="activity-tag">nlp</span> <span class="activity-tag">python</span></div>
+            </div>
+            </div>
+                    
+                    <div style="text-align: center; color: #95a5a6; margin-top: 30px; font-size: 0.9em;">
+                        Resume generated on November 28, 2025
+                    </div>
+                </div>
+            </div>
+        </body>
+        </html>
+        
