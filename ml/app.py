@@ -606,7 +606,7 @@ def generate_html_portfolio(profile: StudentProfile, activities: List[Activity],
         <!DOCTYPE html>
         <html>
         <head>
-            <title>{profile.name} — Resume</title>
+            <title>{profile.name}</title>
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
             <style>
@@ -672,7 +672,7 @@ def generate_html_portfolio(profile: StudentProfile, activities: List[Activity],
         <!DOCTYPE html>
         <html>
         <head>
-            <title>{profile.name} — Resume</title>
+            <title>{profile.name}</title>
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
             <style>
@@ -737,7 +737,7 @@ def generate_html_portfolio(profile: StudentProfile, activities: List[Activity],
         <!DOCTYPE html>
         <html>
         <head>
-            <title>{profile.name} — Resume</title>
+            <title>{profile.name}</title>
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <style>
                 * {{ margin: 0; padding: 0; box-sizing: border-box; }}
@@ -849,4 +849,5 @@ async def health():
     return {"status": "ok", "time": datetime.utcnow().isoformat()}
 
 if __name__ == "__main__":
+
     uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
